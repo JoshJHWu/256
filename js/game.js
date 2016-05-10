@@ -1,6 +1,6 @@
 $(document).ready(function(){
   var view = new View();
-  var board = new Board("2424424224244242");
+  var board = new Board("0000000000000000");
   view.renderBoard(board);
   window.game = new Game(view, board);
 
