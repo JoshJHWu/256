@@ -13,8 +13,7 @@ BoardView.prototype.renderBoard = function(grid) {
   for (var r = 0; r < grid.length; r++) {
     for (var c = 0; c < grid[r].length; c++) {
       if (grid[r][c] === "X") {
-        $('#boardView .row-' + r + ' .col-' + c).css("color","white");
-        $('#boardView .row-' + r + ' .col-' + c).css("background-color","white");
+        $('#boardView .row-' + r + ' .col-' + c).text("");
       } else {
         $('#boardView .row-' + r + ' .col-' + c).text(grid[r][c]).css("color","black");
       }

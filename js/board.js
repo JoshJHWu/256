@@ -8,14 +8,13 @@ var Board = function() {
 
 var initialTiles = [2,4];
 
-
 Board.prototype.isBoardFull = function() {
   for (var r = 0; r < 4; r++) {
     if (this.grid[r].includes("X")) {
-      return true;
+      return false;
     }
   }
-  return false;
+  return true;
 };
 
 Board.prototype.findEmptySpaces = function() {
@@ -39,6 +38,10 @@ Board.prototype.placeNewTile = function() {
 
 Board.prototype.canAnyTilesMove = function() {
   return this.canAnyTileMoveUp() || this.canAnyTileMoveDown() || this.canAnyTileMoveLeft() || this.canAnyTileMoveRight();
+};
+
+Board.prototype.canAnyTilesMoveToCombine = function() {
+  return this.canMoveUpToCombine() || this.canMoveDownToCombine() || this.canMoveLeftToCombine() || this.canMoveRightToCombine();
 };
 
 Board.prototype.canAnyTileMoveUp = function() {
@@ -145,18 +148,176 @@ Board.prototype.moveRight = function() {
   }
 };
 
-// Create start game button => will instantiate 2 tiles
+Board.prototype.canMoveUpToCombine = function() {
+  for (var r = 1; r < 4; r++) {
+    for (var c = 0; c < 4; c++) {
+      if (this.grid[r][c] != "X") {
+        if ((this.grid[r - 1][c] === this.grid[r][c])) {
+          return true;
+        } else if (r === 2 && this.grid[r - 1][c] === "X" && this.grid[r - 2][c] === this.grid[r][c]) {
+            return true;
+        } else if (r === 3 && this.grid[r - 1][c] === "X" && this.grid[r - 2][c] === this.grid[r][c]) {
+            return true;
+        } else if (r === 3 && this.grid[r - 1][c] === "X" && this.grid[r - 2][c] === "X" && this.grid[r - 3][c] === this.grid[r][c]) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+};
 
-// After a user input
-  // ask if any tile can move
-    // if not, game over
-  // if one tile can move, then we move all tiles and combine tile
+Board.prototype.canMoveDownToCombine = function() {
+  for (var r = 2; r > -1; r--) {
+    for (var c = 0; c < 4; c++) {
+      if (this.grid[r][c] != "X") {
+        if ((this.grid[r + 1][c] === this.grid[r][c])) {
+          return true;
+        } else if (r === 1 && this.grid[r + 1][c] === "X" && this.grid[r + 2][c] === this.grid[r][c]) {
+            return true;
+        } else if (r === 0 && this.grid[r + 1][c] === "X" && this.grid[r + 2][c] === this.grid[r][c]) {
+            return true;
+        } else if (r === 0 && this.grid[r + 1][c] === "X" && this.grid[r + 2][c] === "X" && this.grid[r + 3][c] === this.grid[r][c]) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+};
 
-  //
-  // can tile move (up, down, left, right)?
-  // can tiles moveToCombine? (UDLR) ?
+Board.prototype.canMoveLeftToCombine = function() {
+  for (var r = 0; r < 4; r++) {
+    for (var c = 1; c < 4; c++) {
+      if (this.grid[r][c] != "X") {
+        if ((this.grid[r][c - 1] === this.grid[r][c])) {
+          return true;
+        } else if (c === 2 && this.grid[r][c - 1] === "X" && this.grid[r][c - 2] === this.grid[r][c]) {
+            return true;
+        } else if (c === 3 && this.grid[r][c - 1] === "X" && this.grid[r][c - 2] === this.grid[r][c]) {
+            return true;
+        } else if (c === 3 && this.grid[r][c - 1] === "X" && this.grid[r][c - 2] === "X" && this.grid[r][c - 3] === this.grid[r][c]) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+};
 
+Board.prototype.canMoveRightToCombine = function() {
+  for (var r = 0; r < 4; r++) {
+    for (var c = 2; c > -1; c--) {
+      if (this.grid[r][c] != "X") {
+        if ((this.grid[r][c + 1] === this.grid[r][c])) {
+          return true;
+        } else if (c === 1 && this.grid[r][c + 1] === "X" && this.grid[r][c + 2] === this.grid[r][c]) {
+            return true;
+        } else if (c === 0 && this.grid[r][c + 1] === "X" && this.grid[r][c + 2] === this.grid[r][c]) {
+            return true;
+        } else if (c === 0 && this.grid[r][c + 1] === "X" && this.grid[r][c + 2] === "X" && this.grid[r][c + 3] === this.grid[r][c]) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+};
 
-// GAME OVER IF
-  // every tile is full &&
-    // no tile can moveToCombine
+Board.prototype.moveUpToCombine = function() {
+  for (var r = 1; r < 4; r++) {
+    for (var c = 0; c < 4; c++) {
+      if (this.grid[r][c] != "X") {
+        if ((this.grid[r - 1][c] === this.grid[r][c])) {
+          this.grid[r - 1][c] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        } else if (r === 2 && this.grid[r - 1][c] === "X" && this.grid[r - 2][c] === this.grid[r][c]) {
+          this.grid[r - 2][c] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        } else if (r === 3 && this.grid[r - 1][c] === "X" && this.grid[r - 2][c] === this.grid[r][c]) {
+          this.grid[r - 2][c] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        } else if (r === 3 && this.grid[r - 1][c] === "X" && this.grid[r - 2][c] === "X" && this.grid[r - 3][c] === this.grid[r][c]) {
+          this.grid[r - 3][c] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        }
+      }
+    }
+  }
+};
+
+Board.prototype.moveDownToCombine = function() {
+  for (var r = 2; r > -1; r--) {
+    for (var c = 0; c < 4; c++) {
+      if (this.grid[r][c] != "X") {
+        if ((this.grid[r + 1][c] === this.grid[r][c])) {
+          this.grid[r + 1][c] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        } else if (r === 1 && this.grid[r + 1][c] === "X" && this.grid[r + 2][c] === this.grid[r][c]) {
+          this.grid[r + 2][c] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        } else if (r === 0 && this.grid[r + 1][c] === "X" && this.grid[r + 2][c] === this.grid[r][c]) {
+          this.grid[r + 2][c] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        } else if (r === 0 && this.grid[r + 1][c] === "X" && this.grid[r + 2][c] === "X" && this.grid[r + 3][c] === this.grid[r][c]) {
+          this.grid[r + 3][c] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        }
+      }
+    }
+  }
+};
+
+Board.prototype.moveLeftToCombine = function() {
+  for (var r = 0; r < 4; r++) {
+    for (var c = 1; c < 4; c++) {
+      if (this.grid[r][c] != "X") {
+        if ((this.grid[r][c - 1] === this.grid[r][c])) {
+          this.grid[r][c - 1] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        } else if (c === 2 && this.grid[r][c - 1] === "X" && this.grid[r][c - 2] === this.grid[r][c]) {
+          this.grid[r][c - 2] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        } else if (c === 3 && this.grid[r][c - 1] === "X" && this.grid[r][c - 2] === this.grid[r][c]) {
+          this.grid[r][c - 2] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        } else if (c === 3 && this.grid[r][c - 1] === "X" && this.grid[r][c - 2] === "X" && this.grid[r][c - 3] === this.grid[r][c]) {
+          this.grid[r][c - 3] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        }
+      }
+    }
+  }
+};
+
+Board.prototype.moveRightToCombine = function() {
+  for (var r = 0; r < 4; r++) {
+    for (var c = 2; c > -1; c--) {
+      if (this.grid[r][c] != "X") {
+        if ((this.grid[r][c + 1] === this.grid[r][c])) {
+          this.grid[r][c + 1] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        } else if (c === 1 && this.grid[r][c + 1] === "X" && this.grid[r][c + 2] === this.grid[r][c]) {
+          this.grid[r][c + 2] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        } else if (c === 0 && this.grid[r][c + 1] === "X" && this.grid[r][c + 2] === this.grid[r][c]) {
+          this.grid[r][c + 2] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        } else if (c === 0 && this.grid[r][c + 1] === "X" && this.grid[r][c + 2] === "X" && this.grid[r][c + 3] === this.grid[r][c]) {
+          this.grid[r][c + 3] = this.grid[r][c]*2;
+          this.grid[r][c] = "O";
+        }
+      }
+    }
+  }
+};
+
+Board.prototype.removeTheBigO = function() {
+  for (var r = 0; r < 4; r++) {
+    for (var c = 0; c < 4; c++) {
+      if (this.grid[r][c] === "O") {
+        this.grid[r][c] = "X";
+      }
+    }
+  }
+};
