@@ -1,5 +1,11 @@
 var Board = function(gridString){
   this.grid = this.parseGrid(gridString)
+  this.directionMap = {
+    "left" : [0, -1],
+    "right" : [0, 1],
+    "up" : [-1, 0],
+    "down" : [1,0]
+  }
 }
 
 Board.prototype.parseGrid = function(gridString){
@@ -48,4 +54,96 @@ Board.prototype.sampleEmpties = function(){
 
 Board.prototype.placeNewPiece = function(){
   this.assignValue(this.sampleEmpties(), 2);
+}
+
+
+
+Board.prototype.canMove = function(pos, dirCoord) {
+  nextPos = [pos[0] + dirCoord[0], pos[1] + dirCoord[1]];
+  if (nextPos[0] < 0 || nextPos[0] >= 4 || nextPos[1] < 0 || nextPos[1] >= 4) {
+    return false;
+  } else {
+    return (this.grid[nextPos[0]][nextPos[1]] === 0)
+  };
+};
+
+Board.prototype.move = function(pos, dirCoord) {
+  nextPos = [pos[0] + dirCoord[0], pos[1] + dirCoord[1]];
+  this.grid[nextPos[0]][nextPos[1]] = this.grid[pos[0]][pos[1]]
+  this.grid[pos[0]][pos[1]] = 0;
+};
+
+Board.prototype.canCombine = function(pos) {
+  posAbove = [pos[0] - 1, pos[1]];
+  if (posAbove[0] < 0) {
+    return false;
+  } else {
+    return (this.grid[posAbove[0]][posAbove[1]] === this.grid[pos[0]][pos[1]])
+  };
+};
+
+Board.prototype.combine = function(pos) {
+  posAbove = [pos[0] - 1, pos[1]];
+  this.grid[posAbove[0]][posAbove[1]] = this.grid[posAbove[0]][posAbove[1]] * 2;
+  this.grid[pos[0]][pos[1]] = 0;
+};
+
+Board.prototype.resolveMove = function(pos, direction){
+  var dirCoord = [this.directionMap[direction][0], this.directionMap[direction][1]];
+  var position = pos
+  while (this.canMove(position, dirCoord)) {
+    this.move(position, dirCoord);
+    position[0] += dirCoord[0];
+    position[1] += dirCoord[1];
+  };
+  if (this.canCombine(position)){
+    this.combine(position);
+  };
+};
+
+Board.prototype.transpose = function() {
+  var newGrid = this.grid
+  newGrid = newGrid[0].map(function(col, i){
+    return newGrid.map(function(row) {
+      return row[i];
+    })
+  });
+  this.grid = newGrid;
+}
+
+Board.prototype.reverse = function() {
+  this.grid.reverse();
+}
+
+Board.prototype.iterateThroughMoves = function() {
+  for (var row = 1; row < 4; row++){
+    for (var col = 0; col < 4; col++){
+      this.resolveMove([row, col], "up")
+    }
+  }
+}
+
+Board.prototype.resolveAllMoves = function(direction){
+  switch(direction) {
+    case "up":
+      this.iterateThroughMoves();
+      break;
+    case "down":
+      this.reverse();
+      this.iterateThroughMoves();
+      this.reverse();
+      break;
+    case "left":
+      this.transpose();
+      this.iterateThroughMoves();
+      this.transpose();
+      break;
+    case "right":
+      this.transpose();
+      this.reverse();
+      this.iterateThroughMoves();
+      this.reverse();
+      this.transpose();
+      break;
+  }
 }
