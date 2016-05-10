@@ -96,9 +96,6 @@ Board.prototype.resolveMove = function(pos, direction){
     position[0] += dirCoord[0];
     position[1] += dirCoord[1];
   };
-  if (this.canCombine(position)){
-    this.combine(position);
-  };
 };
 
 Board.prototype.transpose = function() {
@@ -115,32 +112,46 @@ Board.prototype.reverse = function() {
   this.grid.reverse();
 }
 
+Board.prototype.iterateThroughCombinations = function() {
+  for (var row = 1; row < 4; row++){
+    for (var col = 0; col < 4; col++){
+      if (this.canCombine([row, col])){
+        this.combine([row, col]);
+      };
+    };
+  };
+};
+
 Board.prototype.iterateThroughMoves = function() {
   for (var row = 1; row < 4; row++){
     for (var col = 0; col < 4; col++){
       this.resolveMove([row, col], "up")
-    }
-  }
+    };
+  };
 }
 
 Board.prototype.resolveAllMoves = function(direction){
   switch(direction) {
     case "up":
+      this.iterateThroughCombinations();
       this.iterateThroughMoves();
       break;
     case "down":
       this.reverse();
+      this.iterateThroughCombinations();
       this.iterateThroughMoves();
       this.reverse();
       break;
     case "left":
       this.transpose();
+      this.iterateThroughCombinations();
       this.iterateThroughMoves();
       this.transpose();
       break;
     case "right":
       this.transpose();
       this.reverse();
+      this.iterateThroughCombinations();
       this.iterateThroughMoves();
       this.reverse();
       this.transpose();
