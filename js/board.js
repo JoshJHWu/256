@@ -75,17 +75,29 @@ Board.prototype.move = function(pos, dirCoord) {
 
 Board.prototype.canCombine = function(pos) {
   posAbove = [pos[0] - 1, pos[1]];
-  if (posAbove[0] < 0) {
-    return false;
-  } else {
-    return (this.grid[posAbove[0]][posAbove[1]] === this.grid[pos[0]][pos[1]])
+  while (posAbove[0] >= 0) {
+    if (this.grid[posAbove[0]][posAbove[1]] === this.grid[pos[0]][pos[1]] && this.grid[pos[0]][pos[1]] != 0) {
+      return true;
+    } else if (this.grid[posAbove[0]][posAbove[1]] != 0) {
+      return false;
+    } else {
+      posAbove[0]--;
+    }
   };
+  return false;
 };
 
 Board.prototype.combine = function(pos) {
   posAbove = [pos[0] - 1, pos[1]];
-  this.grid[posAbove[0]][posAbove[1]] = this.grid[posAbove[0]][posAbove[1]] * 2;
-  this.grid[pos[0]][pos[1]] = 0;
+  while (posAbove[0] >= 0) {
+    if (this.grid[posAbove[0]][posAbove[1]] === this.grid[pos[0]][pos[1]]) {
+      this.grid[posAbove[0]][posAbove[1]] = this.grid[posAbove[0]][posAbove[1]] * 2;
+      this.grid[pos[0]][pos[1]] = 0;
+      break;
+    } else {
+      posAbove[0]--;
+    }
+  };
 };
 
 Board.prototype.resolveMove = function(pos, direction){
@@ -112,13 +124,22 @@ Board.prototype.reverse = function() {
   this.grid.reverse();
 }
 
-Board.prototype.iterateThroughCombinations = function() {
-  for (var row = 1; row < 4; row++){
+Board.prototype.combinations = function() {
+   tilesThatCanCombine = []
+   for (var row = 1; row < 4; row++){
     for (var col = 0; col < 4; col++){
       if (this.canCombine([row, col])){
-        this.combine([row, col]);
+        tilesThatCanCombine.push([row,col]);
       };
     };
+  };
+  return tilesThatCanCombine;
+}
+
+Board.prototype.iterateThroughCombinations = function() {
+  combinations = this.combinations();
+  for (var i = 0; i < combinations.length; i++){
+    this.combine(combinations[i]);
   };
 };
 
