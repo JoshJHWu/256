@@ -26,8 +26,8 @@ Board.prototype.full = function() {
   }
 }
 
-Board.prototype.placePiece = function(piece) {
-  this.grid[piece.xPos][piece.yPos] = piece.value;
+Board.prototype.assignValue = function(position, value) {
+  this.grid[position[0]][position[1]] = value;
 }
 
 Board.prototype.emptySquares = function() {
@@ -46,11 +46,6 @@ Board.prototype.sampleEmpties = function(){
   return this.emptySquares()[Math.floor(Math.random() * this.emptySquares().length)];
 }
 
-Board.prototype.createNewPiece = function(){
-  emptyPos = this.sampleEmpties();
-  return new Piece({xPos: emptyPos[0], yPos: emptyPos[1]})
-}
-
 Board.prototype.placeNewPiece = function(){
-  this.placePiece(this.createNewPiece());
+  this.assignValue(this.sampleEmpties(), 2);
 }
