@@ -1,11 +1,5 @@
 var Board = function(gridString){
   this.grid = this.parseGrid(gridString)
-  this.directionMap = {
-    "left" : [0, -1],
-    "right" : [0, 1],
-    "up" : [-1, 0],
-    "down" : [1,0]
-  }
 }
 
 Board.prototype.parseGrid = function(gridString){
@@ -147,6 +141,26 @@ Board.prototype.iterateThroughMoves = function() {
       this.resolveMove([row, col], "up")
     };
   };
+}
+
+Board.prototype.noCombinations = function() {
+  if (this.combinations().length != 0) {
+    return false;
+  };
+  this.transpose();
+  if (this.combinations().length != 0) {
+    return false;
+  };
+  this.reverse();
+  if (this.combinations().length != 0) {
+    return false;
+  };
+  this.transpose();
+  if (this.combinations().length != 0) {
+    return false;
+  };
+  this.reverse();
+  return true;
 }
 
 Board.prototype.resolveAllMoves = function(direction){

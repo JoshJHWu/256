@@ -36,7 +36,7 @@ Game.prototype.resolveAllMoves = function(direction) {
 };
 
 Game.prototype.gameOver = function() {
-  return this.board.emptySquares().length === 0 && this.board.combinations().length === 0
+  return this.board.emptySquares().length === 0 && this.board.noCombinations()
 }
 
 
