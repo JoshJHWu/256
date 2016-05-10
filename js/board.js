@@ -58,23 +58,23 @@ Board.prototype.placeNewPiece = function(){
 
 
 
-Board.prototype.canMove = function(pos, dirCoord) {
-  nextPos = [pos[0] + dirCoord[0], pos[1] + dirCoord[1]];
-  if (nextPos[0] < 0 || nextPos[0] >= 4 || nextPos[1] < 0 || nextPos[1] >= 4) {
+Board.prototype.canMove = function(pos) {
+  var nextPos = [pos[0] - 1, pos[1]];
+  if (nextPos[0] < 0) {
     return false;
   } else {
     return (this.grid[nextPos[0]][nextPos[1]] === 0)
   };
 };
 
-Board.prototype.move = function(pos, dirCoord) {
-  nextPos = [pos[0] + dirCoord[0], pos[1] + dirCoord[1]];
+Board.prototype.move = function(pos) {
+  var nextPos = [pos[0] - 1, pos[1]];
   this.grid[nextPos[0]][nextPos[1]] = this.grid[pos[0]][pos[1]]
   this.grid[pos[0]][pos[1]] = 0;
 };
 
 Board.prototype.canCombine = function(pos) {
-  posAbove = [pos[0] - 1, pos[1]];
+  var posAbove = [pos[0] - 1, pos[1]];
   while (posAbove[0] >= 0) {
     if (this.grid[posAbove[0]][posAbove[1]] === this.grid[pos[0]][pos[1]] && this.grid[pos[0]][pos[1]] != 0) {
       return true;
@@ -88,7 +88,7 @@ Board.prototype.canCombine = function(pos) {
 };
 
 Board.prototype.combine = function(pos) {
-  posAbove = [pos[0] - 1, pos[1]];
+  var posAbove = [pos[0] - 1, pos[1]];
   while (posAbove[0] >= 0) {
     if (this.grid[posAbove[0]][posAbove[1]] === this.grid[pos[0]][pos[1]]) {
       this.grid[posAbove[0]][posAbove[1]] = this.grid[posAbove[0]][posAbove[1]] * 2;
@@ -100,13 +100,11 @@ Board.prototype.combine = function(pos) {
   };
 };
 
-Board.prototype.resolveMove = function(pos, direction){
-  var dirCoord = [this.directionMap[direction][0], this.directionMap[direction][1]];
+Board.prototype.resolveMove = function(pos){
   var position = pos
-  while (this.canMove(position, dirCoord)) {
-    this.move(position, dirCoord);
-    position[0] += dirCoord[0];
-    position[1] += dirCoord[1];
+  while (this.canMove(position)) {
+    this.move(position);
+    position[0]--;
   };
 };
 
@@ -125,7 +123,7 @@ Board.prototype.reverse = function() {
 }
 
 Board.prototype.combinations = function() {
-   tilesThatCanCombine = []
+   var tilesThatCanCombine = []
    for (var row = 1; row < 4; row++){
     for (var col = 0; col < 4; col++){
       if (this.canCombine([row, col])){
@@ -137,7 +135,7 @@ Board.prototype.combinations = function() {
 }
 
 Board.prototype.iterateThroughCombinations = function() {
-  combinations = this.combinations();
+  var combinations = this.combinations();
   for (var i = 0; i < combinations.length; i++){
     this.combine(combinations[i]);
   };
