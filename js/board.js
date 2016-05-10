@@ -47,7 +47,9 @@ Board.prototype.sampleEmpties = function(){
 }
 
 Board.prototype.placeNewPiece = function(){
-  this.assignValue(this.sampleEmpties(), 2);
+  if (this.emptySquares().length != 0){
+    this.assignValue(this.sampleEmpties(), 2);
+  }
 }
 
 
@@ -144,23 +146,20 @@ Board.prototype.iterateThroughMoves = function() {
 }
 
 Board.prototype.noCombinations = function() {
-  if (this.combinations().length != 0) {
-    return false;
-  };
+  var numberOfCombos = 0;
+  numberOfCombos += this.combinations().length;
   this.transpose();
-  if (this.combinations().length != 0) {
-    return false;
-  };
-  this.reverse();
-  if (this.combinations().length != 0) {
-    return false;
-  };
+  numberOfCombos += this.combinations().length;
   this.transpose();
-  if (this.combinations().length != 0) {
-    return false;
-  };
   this.reverse();
-  return true;
+  numberOfCombos += this.combinations().length;
+  this.reverse();
+  this.transpose();
+  this.reverse();
+  numberOfCombos += this.combinations().length;
+  this.reverse();
+  this.transpose();
+  return numberOfCombos === 0;
 }
 
 Board.prototype.resolveAllMoves = function(direction){
