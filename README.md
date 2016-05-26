@@ -7,9 +7,9 @@ A sliding tile puzzle game based on Gabriele Cirulli's [2048](http://gabrielecir
 
 The board takes an input string and parses a starting grid. The string can be altered to create a different starting board.
 
-'''
+```
 > new Board("0000000000000000");
-''' 
+``` 
 
 # Future Additions
 * Add color to each tile based on tile value
