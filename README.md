@@ -18,6 +18,6 @@ The board takes an input string and parses a starting grid. The string can be al
 # Notes
 ## Dependencies
 Game requires 
-* https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-rc1/jquery.js jQuery CDN
+* jQuery CDN https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-rc1/jquery.js 
 * mousetrap.js library
 
